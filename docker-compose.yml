@@ -1,0 +1,50 @@
+version: '2'
+
+services:
+  auth_app:
+    depends_on:
+      - 'database'
+    build: 
+      context: ./tbauth
+    ports:
+      - '3000:9000'
+    volumes:
+      - './tbauth:/tbauth'
+    env_file:
+      # - 'dev.env'
+      - './tbauth/dev.env'
+
+  client_app:
+    depends_on:
+      - 'database'
+      - 'redis'
+    build: 
+      context: ./tbclient
+    ports:
+      - '4000:9000'
+    volumes:
+      - './tbclient:/tbclient'
+    env_file:
+      # - 'dev.env'
+      - './tbclient/dev.env'
+
+  database:
+    image: 'postgres:alpine'
+    env_file:
+      - 'dev.env'
+    expose:
+      - '5432'
+    volumes:
+      - 'postgres:/var/lib/postgresql/data'
+
+  redis:
+    image: 'redis:3.2-alpine'
+    command: redis-server --requirepass p4ssw0rd
+    ports:
+      - '6379:6379'
+    volumes:
+      - 'redis:/var/lib/redis/data'
+
+volumes:
+  redis:
+  postgres:
