@@ -1,0 +1,6 @@
+[submodule "tbauth"]
+	path = tbauth
+	url = https://github.com/sovetnik/tbauth.git
+[submodule "tbclient"]
+	path = tbclient
+	url = https://github.com/sovetnik/tbclient.git
