@@ -1,17 +1,31 @@
 version: '2'
 
 services:
+  web:
+    depends_on:
+      - 'auth_app'
+      - 'client_app'
+    build: 
+      context: ./tbproxy
+    ports:
+      - '80:80'
+    volumes:
+      - 'auth_public:/static/auth'
+      - 'client_public:/static/client'
+ 
   auth_app:
     depends_on:
       - 'database'
     build: 
       context: ./tbauth
-    ports:
-      - '3000:9000'
+    expose:
+      - '9000'
     volumes:
       - './tbauth:/tbauth'
+      - 'auth_public:/tbauth/public'
     env_file:
-      - './tbauth/dev.env'
+      - 'prod.env'
+      - 'auth.env'
 
   client_app:
     depends_on:
@@ -19,17 +33,19 @@ services:
       - 'redis'
     build: 
       context: ./tbclient
-    ports:
-      - '4000:9000'
+    expose:
+      - '9000'
     volumes:
       - './tbclient:/tbclient'
+      - 'client_public:/tbclient/public'
     env_file:
-      - './tbclient/dev.env'
+      - 'prod.env'
+      - 'client.env'
 
   database:
     image: 'postgres:alpine'
     env_file:
-      - 'dev.env'
+      - 'prod.env'
     expose:
       - '5432'
     volumes:
@@ -46,3 +62,5 @@ services:
 volumes:
   redis:
   postgres:
+  auth_public:
+  client_public:
